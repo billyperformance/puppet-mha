@@ -1,22 +1,22 @@
 language: ruby
+rvm:
+- 2.1.9
 cache: bundler
+script: bundle exec rake
+env:
+- PUPPET_VERSION='~> 3.8.0'
+- PUPPET_VERSION='~> 4.5.0'
 matrix:
   include:
-  - rvm: 2.0.0
-    env: PUPPET_VERSION='~> 3.8.0'
-    script: bundle exec rake
-  - rvm: 2.3.0
-    env: PUPPET_VERSION='~> 4.4.0'
-    script: bundle exec rake
   - rvm: default
     sudo: required
     services: docker
-    env: BEAKER_set=centos6
+    env: BEAKER_set=centos6 BEAKER_debug=true
     script: bundle exec rake beaker
   - rvm: default
     sudo: required
     services: docker
-    env: BEAKER_set=centos7
+    env: BEAKER_set=centos7 BEAKER_debug=true
     script: bundle exec rake beaker
 notifications:
   slack:

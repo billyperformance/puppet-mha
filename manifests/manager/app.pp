@@ -16,6 +16,10 @@ define mha::manager::app (
 
   include mha::params
 
+  validate_array($nodes)
+  validate_hash($default)
+  validate_bool($manage_daemon)
+
   file { "/etc/masterha/${name}.cnf":
     ensure  => present,
     content => template('mha/app.cnf.erb'),
@@ -25,6 +29,7 @@ define mha::manager::app (
   }
 
   mha::ssh_private_key { "mha::manager::${name}":
+    user    => $ssh_user,
     path    => $ssh_key_path,
     content => $ssh_private_key,
   }

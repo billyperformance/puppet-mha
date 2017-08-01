@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
-describe 'mha::node class' do
-  let(:manifest) {
+describe 'mha::manager class' do
+  let(:manifest) do
     <<-EOS
       case $::operatingsystemmajrelease {
         '6': { include '::mha::manager' }
@@ -13,12 +13,11 @@ describe 'mha::node class' do
         }
       }
     EOS
-  }
+  end
 
   it 'should work without errors' do
-    result = apply_manifest(manifest, :acceptable_exit_codes => [0, 2], :catch_failures => true)
-    expect(result.exit_code).not_to eq 4
-    expect(result.exit_code).not_to eq 6
+    result = apply_manifest(manifest, catch_failures: true)
+    expect(result.exit_code).to eq 2
   end
 
   it 'should run a second time without changes' do
@@ -32,25 +31,9 @@ describe 'mha::node class' do
   end
 
   perl_pkgs = case os[:release].to_i
-              when 5
-                [
-                  'perl-Config-Tiny',
-                  'perl-Log-Dispatch',
-                  'perl-Parallel-ForkManager'
-                ]
-              when 6
-                [
-                  'perl-Config-Tiny',
-                  'perl-Log-Dispatch',
-                  'perl-Parallel-ForkManager',
-                  'perl-Time-HiRes',
-                ]
-              when 7
-                [
-                  'perl-Config-Tiny',
-                  'perl-Log-Dispatch',
-                  'perl-Parallel-ForkManager',
-                ]
+              when 5 then %w(perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager)
+              when 6 then %w(perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Time-HiRes)
+              when 7 then %w(perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager)
               end
 
   perl_pkgs.each do |perl_pkg|
